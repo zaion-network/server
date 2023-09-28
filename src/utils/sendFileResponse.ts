@@ -46,12 +46,12 @@ export const sendFileResponse = async (
 ) => {
   const headers = new Headers();
   headers.append(key, type);
-  console.log("sending file response");
+  console.log("sending file response", path);
 
   try {
-    console.log("getting file string");
+    console.log("getting file string", path);
     const string = await getFileString(path);
-    console.log("sending response");
+    console.log("sending response", path);
     return new Response(string, { headers });
   } catch (error) {
     console.log("handling ");
