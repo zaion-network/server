@@ -17,7 +17,7 @@ export class SimpleServer {
   #server;
   constructor(
     port: number,
-    cb: (req: Request) => Promise<boolean>,
+    cb: (req: Request) => Promise<string>,
     handler: (request: Request) => Promise<Response> = SimpleServer.handler(cb)
   ) {
     this.#server = Bun.serve({
@@ -44,7 +44,7 @@ export namespace SimpleServer {
     manifest = "/manifest.json",
   }
   export const handler =
-    (cb: (req: Request) => Promise<boolean>) => async (req: Request) => {
+    (cb: (req: Request) => Promise<string>) => async (req: Request) => {
       const { CONTENT_TYPE } = SimpleServer.Header.HeaderKeys;
       const {
         TEXT_JAVASCRIPT,
@@ -60,60 +60,77 @@ export namespace SimpleServer {
       } = SimpleServer.Header.ContentTypeValues;
       const url = new URL(req.url);
       const path = url.pathname;
-      const cbreturn = await cb(req);
-      if (cbreturn !== undefined) return new Response(`${cbreturn}`);
-      if (path === SimpleServer.pathnames.css)
-        return sendFileResponse(CONTENT_TYPE, TEXT_CSS, SimpleServer.paths.css);
-      if (path === SimpleServer.pathnames.js) {
-        return sendFileResponse(
-          CONTENT_TYPE,
-          TEXT_JAVASCRIPT,
-          SimpleServer.paths.js
-        );
-      }
-      if (path === SimpleServer.pathnames.manifest) {
-        return sendFileResponse(
-          CONTENT_TYPE,
-          APPLICATION_JSON,
-          SimpleServer.paths.manifest
-        );
-      }
-      if (path.includes("/assets/")) {
-        const extension = path.split(".").pop();
-
-        const map = new Map();
-        map.set("js", TEXT_JAVASCRIPT);
-        map.set("css", TEXT_CSS);
-        map.set("svg", IMAGE_SVGXML);
-        map.set("png", IMAGE_PNG);
-        map.set("ico", IMAGE_XICON);
-        map.set("ttf", FONT_TTF);
-        map.set("woff", FONT_WOFF);
-        const contentType = map.get(extension);
-        if (!contentType)
-          throw new Error(
-            "This type of file is not yet suppored by the server."
+      try {
+        const cbreturn = await cb(req);
+        if (cbreturn !== undefined) return new Response(`${cbreturn}`);
+        if (path === SimpleServer.pathnames.css) {
+          console.log("handling:", path);
+          return sendFileResponse(
+            CONTENT_TYPE,
+            TEXT_CSS,
+            SimpleServer.paths.css
           );
-        if (
-          contentType === IMAGE_PNG ||
-          contentType === IMAGE_XICON ||
-          contentType === IMAGE_GIF ||
-          contentType === IMAGE_JPEG
-        ) {
-          const file = Bun.file(`.${path}`);
-          return new Response(file);
         }
-        return sendFileResponse(
-          SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
-          contentType,
-          `.${path}`
-        );
-      } else {
-        return sendFileResponse(
-          SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
-          SimpleServer.Header.ContentTypeValues.TEXT_HTML,
-          SimpleServer.paths.index
-        );
+        if (path === SimpleServer.pathnames.js) {
+          console.log("handling:", path);
+          return sendFileResponse(
+            CONTENT_TYPE,
+            TEXT_JAVASCRIPT,
+            SimpleServer.paths.js
+          );
+        }
+        if (path === SimpleServer.pathnames.manifest) {
+          console.log("handling:", path);
+          return sendFileResponse(
+            CONTENT_TYPE,
+            APPLICATION_JSON,
+            SimpleServer.paths.manifest
+          );
+        }
+        if (path.includes("/assets/")) {
+          console.log("handling:", path);
+          const extension = path.split(".").pop();
+          const map = new Map();
+          map.set("js", TEXT_JAVASCRIPT);
+          map.set("css", TEXT_CSS);
+          map.set("svg", IMAGE_SVGXML);
+          map.set("png", IMAGE_PNG);
+          map.set("ico", IMAGE_XICON);
+          map.set("ttf", FONT_TTF);
+          map.set("woff", FONT_WOFF);
+          const contentType = map.get(extension);
+          if (!contentType) {
+            console.log("undefined content type");
+            throw new Error(
+              "This type of file is not yet suppored by the server."
+            );
+          }
+          if (
+            contentType === IMAGE_PNG ||
+            contentType === IMAGE_XICON ||
+            contentType === IMAGE_GIF ||
+            contentType === IMAGE_JPEG
+          ) {
+            console.log("handling an image file type");
+            const file = Bun.file(`.${path}`);
+            return new Response(file);
+          }
+          return sendFileResponse(
+            SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+            contentType,
+            `.${path}`
+          );
+        } else {
+          console.log("fallback handling");
+          return sendFileResponse(
+            SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+            SimpleServer.Header.ContentTypeValues.TEXT_HTML,
+            SimpleServer.paths.index
+          );
+        }
+      } catch (error: any) {
+        console.log("got an error handling messages", error);
+        throw new Error(error.message);
       }
     };
   export namespace Header {
