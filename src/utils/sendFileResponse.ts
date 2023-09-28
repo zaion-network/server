@@ -32,19 +32,29 @@ export const sendFileResponse = async (
     const { TEXT_JAVASCRIPT, TEXT_HTML, TEXT_CSS } =
       SimpleServer.Header.ContentTypeValues;
     if (type === TEXT_HTML) {
+      console.log("sending and html");
       return new Response(defaultHtml, { headers });
-    } else if (type === TEXT_JAVASCRIPT)
+    } else if (type === TEXT_JAVASCRIPT) {
+      console.log("sending an js");
       return new Response(defaultJs, { headers });
-    else if (type === TEXT_CSS) return new Response(defaultCss, { headers });
+    } else if (type === TEXT_CSS) {
+      console.log("sending a css");
+      return new Response(defaultCss, { headers });
+    }
     return new Response("oh mamma");
   }
 ) => {
   const headers = new Headers();
   headers.append(key, type);
+  console.log("sending file response");
+
   try {
+    console.log("getting file string");
     const string = await getFileString(path);
+    console.log("sending response");
     return new Response(string, { headers });
   } catch (error) {
+    console.log("handling ");
     return fallback(headers);
   }
 };
