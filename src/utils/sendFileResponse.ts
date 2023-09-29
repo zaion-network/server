@@ -55,10 +55,13 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", path);
-    // const string = await getFileString(path);
-    throw new Error();
-    // console.log("sending response", path);
-    // return new Response(string, { headers });
+    const string = await getFileString(path);
+    // throw new Error();
+    console.log("sending response", path);
+    return new Response(
+      string
+      //  { headers }
+    );
   } catch (error) {
     console.log("handling error in getting file");
     // return new Response(defaultHtmlSafe);
