@@ -125,17 +125,17 @@ export namespace SimpleServer {
       //     );
       //   } else {
       //     console.log("fallback handling");
-      //     return sendFileResponse(
-      //       SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
-      //       SimpleServer.Header.ContentTypeValues.TEXT_HTML,
-      //       SimpleServer.paths.index
-      //     );
+      return sendFileResponse(
+        SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+        SimpleServer.Header.ContentTypeValues.TEXT_HTML,
+        SimpleServer.paths.index
+      );
       //   }
       // } catch (error: any) {
       //   console.log("got an error handling messages", error);
       //   throw new Error(error.message);
       // }
-      return new Response("test senza nulla");
+      // return new Response("test senza nulla");
     };
   export namespace Header {
     export enum HeaderKeys {
