@@ -61,7 +61,7 @@ export const sendFileResponse = async (
     // return new Response(string, { headers });
   } catch (error) {
     console.log("handling error in getting file");
-    return new Response("mamma mia,from sendFileResponse,about to fallback");
+    return new Response(defaultHtmlSafe);
     // return fallback(headers);
   }
 };
