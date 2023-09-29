@@ -7,6 +7,11 @@ const defaultHtml = `
 <script type='module' src='./dist/index.js' ></script>
 <link rel='stylesheet' href='/assets/style.css' />
 `;
+const defaultHtmlSafe = `
+<h1>SimpleServer</h1>
+<div id="pis"><p>this is a</p> <p class="red">default</p> <p>html</p></div>
+<div id="pis"><p>to get started simply add an</p> <pre>index.html</pre> <p>and an</p> <pre>assets/style.css</pre> <p>file in your repo</p></div>
+`;
 
 const defaultJs = `console.log("Hello world, this is a default js files loaded with SimpleServer")`;
 
@@ -33,7 +38,7 @@ export const sendFileResponse = async (
       SimpleServer.Header.ContentTypeValues;
     if (type === TEXT_HTML) {
       console.log("sending and html");
-      return new Response(defaultHtml, { headers });
+      return new Response(defaultHtmlSafe, { headers });
     } else if (type === TEXT_JAVASCRIPT) {
       console.log("sending an js");
       return new Response(defaultJs, { headers });
