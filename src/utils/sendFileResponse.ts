@@ -59,7 +59,7 @@ export const sendFileResponse = async (
     // throw new Error();
     console.log("sending response", path);
     return new Response(
-      path
+      JSON.stringify(Bun)
       //  { headers }
     );
   } catch (error) {
