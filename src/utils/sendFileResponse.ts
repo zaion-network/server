@@ -46,7 +46,7 @@ export const sendFileResponse = async (
     //   console.log("sending a css");
     //   return new Response(defaultCss, { headers });
     // }
-    return new Response("oh mamma mia, mamma mia let me go");
+    return new Response("oh mamma mia, mamma mia let me gom fungiz");
   }
 ) => {
   const headers = new Headers();
@@ -55,11 +55,11 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", path);
-    // const string = await getFileString(path);
+    const string = await getFileString(path);
     // throw new Error();
     console.log("sending response", path);
     return new Response(
-      "string"
+      "string o carmine"
       //  { headers }
     );
   } catch (error) {
