@@ -53,14 +53,14 @@ export const sendFileResponse = async (
   headers.append(key, type);
   console.log("sending file response", path);
 
-  // try {
-  //   console.log("getting file string", path);
-  //   const string = await getFileString(path);
-  //   console.log("sending response", path);
-  //   return new Response(string, { headers });
-  // } catch (error) {
-  //   console.log("handling ");
-  //   return fallback(headers);
-  // }
-  return new Response("mamma mia,from sendFileResponse");
+  try {
+    console.log("getting file string", path);
+    const string = await getFileString(path);
+    console.log("sending response", path);
+    return new Response(string, { headers });
+  } catch (error) {
+    console.log("handling ");
+    return new Response("mamma mia,from sendFileResponse,about to fallback");
+    // return fallback(headers);
+  }
 };
