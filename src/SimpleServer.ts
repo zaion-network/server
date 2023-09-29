@@ -61,7 +61,10 @@ export namespace SimpleServer {
       const url = new URL(req.url);
       const path = url.pathname;
       try {
-        const cbreturn = await cb(req);
+        let cbreturn = undefined;
+        if (cb) {
+          cbreturn = await cb(req);
+        }
         if (cbreturn !== undefined) return new Response(`${cbreturn}`);
         if (path === SimpleServer.pathnames.css) {
           console.log("handling:", path);
