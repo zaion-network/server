@@ -34,18 +34,18 @@ export const sendFileResponse = async (
   type: SimpleServer.Header.ContentTypeValues,
   path: string,
   fallback: (headers: Headers) => Promise<Response> = async headers => {
-    const { TEXT_JAVASCRIPT, TEXT_HTML, TEXT_CSS } =
-      SimpleServer.Header.ContentTypeValues;
-    if (type === TEXT_HTML) {
-      console.log("sending and html");
-      return new Response(defaultHtmlSafe);
-    } else if (type === TEXT_JAVASCRIPT) {
-      console.log("sending an js");
-      return new Response(defaultJs, { headers });
-    } else if (type === TEXT_CSS) {
-      console.log("sending a css");
-      return new Response(defaultCss, { headers });
-    }
+    // const { TEXT_JAVASCRIPT, TEXT_HTML, TEXT_CSS } =
+    //   SimpleServer.Header.ContentTypeValues;
+    // if (type === TEXT_HTML) {
+    //   console.log("sending and html");
+    //   return new Response(defaultHtmlSafe);
+    // } else if (type === TEXT_JAVASCRIPT) {
+    //   console.log("sending an js");
+    //   return new Response(defaultJs, { headers });
+    // } else if (type === TEXT_CSS) {
+    //   console.log("sending a css");
+    //   return new Response(defaultCss, { headers });
+    // }
     return new Response("oh mamma");
   }
 ) => {
@@ -61,7 +61,7 @@ export const sendFileResponse = async (
     // return new Response(string, { headers });
   } catch (error) {
     console.log("handling error in getting file");
-    return new Response(defaultHtmlSafe);
-    // return fallback(headers);
+    // return new Response(defaultHtmlSafe);
+    return fallback(headers);
   }
 };
