@@ -55,12 +55,12 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", path);
-    const file = Bun.file(path);
-    const text = await file.text();
+    // const file = Bun.file(path);
+    // const text = await file.text();
     // throw new Error();
     console.log("sending response", path);
     return new Response(
-      text
+      defaultHtmlSafe
       //  { headers }
     );
   } catch (error) {
