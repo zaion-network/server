@@ -56,10 +56,15 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", "./package.json");
+    const testpath = "./package.json";
     const fileexists = existsSync("./package.json");
-    return new Response(
-      JSON.stringify(fileexists) // dovrebbe mandare al browser il contenuto di package.json
-    );
+    if (fileexists) {
+      const file = Bun.file(testpath);
+      const text = await file.text();
+      return new Response(
+        text // dovrebbe mandare al browser il contenuto di package.json
+      );
+    } else throw new Error("file not foundo");
   } catch (error) {
     console.log("handling error in getting file");
     // return new Response(defaultHtmlSafe);
