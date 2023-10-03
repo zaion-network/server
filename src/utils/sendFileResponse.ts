@@ -54,15 +54,11 @@ export const sendFileResponse = async (
   console.log("sending file response", path);
 
   try {
-    console.log("getting file string", path);
-    // const file = Bun.file(path);
-    // const text = await file.text();
-    // throw new Error();
-    const methodstring = Bun.toString();
-    console.log("sending response", path);
+    console.log("getting file string", "./package.json");
+    const file = Bun.file("./package.json");
+    console.log("sending response", file.type);
     return new Response(
-      methodstring
-      //  { headers }
+      file.type // dovrebbe mandare al browser application/json;charset=utf-8
     );
   } catch (error) {
     console.log("handling error in getting file");
