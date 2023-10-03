@@ -46,7 +46,7 @@ export const sendFileResponse = async (
     //   console.log("sending a css");
     //   return new Response(defaultCss, { headers });
     // }
-    return new Response("oh mamma mia, mamma mia let me gom fungiz");
+    return new Response("the file you searched was not found, try again");
   }
 ) => {
   const headers = new Headers();
@@ -56,9 +56,10 @@ export const sendFileResponse = async (
   try {
     console.log("getting file string", "./package.json");
     const file = Bun.file("./package.json");
-    console.log("sending response", file.type);
+    const text = await file.text();
+    console.log("sending response", text);
     return new Response(
-      file.type // dovrebbe mandare al browser application/json;charset=utf-8
+      text // dovrebbe mandare al browser il contenuto di package.json
     );
   } catch (error) {
     console.log("handling error in getting file");
