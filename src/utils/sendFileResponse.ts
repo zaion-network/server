@@ -1,4 +1,4 @@
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { SimpleServer, getFileString } from "..";
 
 const defaultHtml = `
@@ -59,10 +59,11 @@ export const sendFileResponse = async (
     const testpath = "./package.json";
     const fileexists = existsSync("./package.json");
     if (fileexists) {
-      const file = Bun.file(testpath);
-      const text = await file.text();
+      // const file = Bun.file(testpath);
+      // const text = await file.text();
+      const file = readFileSync(testpath, { encoding: "utf8" });
       return new Response(
-        text // dovrebbe mandare al browser il contenuto di package.json
+        file // dovrebbe mandare al browser il contenuto di package.json
       );
     } else throw new Error("file not foundo");
   } catch (error) {
