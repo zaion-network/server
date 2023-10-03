@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import { SimpleServer, getFileString } from "..";
 
 const defaultHtml = `
@@ -55,11 +56,9 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", "./package.json");
-    const file = Bun.file("./package.json");
-    const text = await file.text();
-    console.log("sending response", text);
+    const fileexists = existsSync("./package.json");
     return new Response(
-      text // dovrebbe mandare al browser il contenuto di package.json
+      JSON.stringify(fileexists) // dovrebbe mandare al browser il contenuto di package.json
     );
   } catch (error) {
     console.log("handling error in getting file");
