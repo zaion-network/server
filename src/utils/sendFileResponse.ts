@@ -50,7 +50,7 @@ export const sendFileResponse = async (
 
   try {
     console.log("getting file string", path);
-    const string = await getFileString(path);
+    const string = getFileString(path);
     console.log("sending response", path);
     return new Response(string, { headers });
   } catch (error) {
