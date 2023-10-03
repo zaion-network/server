@@ -58,7 +58,7 @@ export const sendFileResponse = async (
     // const file = Bun.file(path);
     // const text = await file.text();
     // throw new Error();
-    const methodstring = Bun.file.toString();
+    const methodstring = Bun.toString();
     console.log("sending response", path);
     return new Response(
       methodstring
