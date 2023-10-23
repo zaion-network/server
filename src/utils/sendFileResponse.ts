@@ -1,4 +1,5 @@
 import { SimpleServer, getFileString } from "..";
+import { logger } from "./logger";
 
 const defaultHtml = `
 <h1>SimpleServer</h1>
@@ -8,7 +9,7 @@ const defaultHtml = `
 <link rel='stylesheet' href='/assets/style.css' />
 `;
 
-const defaultJs = `console.log("Hello world, this is a default js files loaded with SimpleServer")`;
+const defaultJs = `logger("Hello world, this is a default js files loaded with SimpleServer")`;
 
 const defaultCss = `
 .red { color: red;}
@@ -32,13 +33,13 @@ export const sendFileResponse = async (
     const { TEXT_JAVASCRIPT, TEXT_HTML, TEXT_CSS } =
       SimpleServer.Header.ContentTypeValues;
     if (type === TEXT_HTML) {
-      console.log("sending an html");
+      logger("sending an html");
       return new Response(defaultHtml, { headers });
     } else if (type === TEXT_JAVASCRIPT) {
-      console.log("sending an js");
+      logger("sending an js");
       return new Response(defaultJs, { headers });
     } else if (type === TEXT_CSS) {
-      console.log("sending a css");
+      logger("sending a css");
       return new Response(defaultCss, { headers });
     }
     return new Response("oh mamma");
@@ -46,15 +47,15 @@ export const sendFileResponse = async (
 ) => {
   const headers = new Headers();
   headers.append(key, type);
-  console.log("sending file response", path);
+  logger("sending file response", path);
 
   try {
-    console.log("getting file string", path);
+    logger("getting file string", path);
     const string = getFileString(path);
-    console.log("sending response", path);
+    logger("sending response", path);
     return new Response(string, { headers });
   } catch (error) {
-    console.log("handling ");
+    logger("handling ");
     return fallback(headers);
   }
 };
