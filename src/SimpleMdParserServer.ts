@@ -1,4 +1,5 @@
 import { frontMatterInMdToJSObject } from "./utils/frontMatterInMdToJSObject";
+import { logger } from "./utils/logger";
 
 export class SimpleMdParserServer {
   #server;
@@ -11,7 +12,7 @@ export class SimpleMdParserServer {
         const text = await req.text();
         const res = await frontMatterInMdToJSObject(text);
         const json = JSON.parse(res);
-        console.log(json);
+        logger(json);
         const response = {
           data: json.data.frontmatter,
           html: json.value,
@@ -21,6 +22,6 @@ export class SimpleMdParserServer {
 
       port: process.env.PORT || 8085,
     });
-    console.log(`listening on port: ${this.#server.port}`);
+    logger(`listening on port: ${this.#server.port}`);
   }
 }
