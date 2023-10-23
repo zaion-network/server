@@ -1,3 +1,6 @@
+#!/usr/bin/env bun
+
+import { logger } from "./utils/logger";
 import { sendFileResponse } from "./utils/sendFileResponse";
 
 /**
@@ -24,7 +27,7 @@ export class SimpleServer {
       port,
       fetch: handler,
     });
-    console.log(`Server is listening on port: `, this.#server.port);
+    logger(`Server is listening on port: `, this.#server.port);
   }
   get server() {
     return this.#server;
@@ -67,7 +70,7 @@ export namespace SimpleServer {
         }
         if (cbreturn !== undefined) return new Response(`${cbreturn}`);
         if (path === SimpleServer.pathnames.css) {
-          console.log("handling:", path);
+          logger("handling:", path);
           return sendFileResponse(
             CONTENT_TYPE,
             TEXT_CSS,
@@ -75,7 +78,7 @@ export namespace SimpleServer {
           );
         }
         if (path === SimpleServer.pathnames.js) {
-          console.log("handling:", path);
+          logger("handling:", path);
           return sendFileResponse(
             CONTENT_TYPE,
             TEXT_JAVASCRIPT,
@@ -83,7 +86,7 @@ export namespace SimpleServer {
           );
         }
         if (path === SimpleServer.pathnames.manifest) {
-          console.log("handling:", path);
+          logger("handling:", path);
           return sendFileResponse(
             CONTENT_TYPE,
             APPLICATION_JSON,
@@ -91,7 +94,7 @@ export namespace SimpleServer {
           );
         }
         if (path.includes("/assets/")) {
-          console.log("handling:", path);
+          logger("handling:", path);
           const extension = path.split(".").pop();
           const map = new Map();
           map.set("js", TEXT_JAVASCRIPT);
@@ -103,7 +106,7 @@ export namespace SimpleServer {
           map.set("woff", FONT_WOFF);
           const contentType = map.get(extension);
           if (!contentType) {
-            console.log("undefined content type");
+            logger("undefined content type");
             throw new Error(
               "This type of file is not yet suppored by the server."
             );
@@ -114,7 +117,7 @@ export namespace SimpleServer {
             contentType === IMAGE_GIF ||
             contentType === IMAGE_JPEG
           ) {
-            console.log("handling an image file type");
+            logger("handling an image file type");
             const file = Bun.file(`.${path}`);
             return new Response(file);
           }
@@ -124,7 +127,7 @@ export namespace SimpleServer {
             `.${path}`
           );
         } else {
-          console.log("fallback handling");
+          logger("fallback handling");
           return sendFileResponse(
             SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
             SimpleServer.Header.ContentTypeValues.TEXT_HTML,
@@ -132,7 +135,7 @@ export namespace SimpleServer {
           );
         }
       } catch (error: any) {
-        console.log("got an error handling messages", error);
+        logger("got an error handling messages", error);
         throw new Error(error.message);
       }
     };
