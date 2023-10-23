@@ -4,8 +4,9 @@
 // };
 
 import { readFileSync } from "fs";
+import { logger } from "./logger";
 
 export const getFileString = (path: string) => {
-  console.log(`scope: ${getFileString.name}, getting: ${path}`);
+  logger(`scope: ${getFileString.name}, getting: ${path}`);
   return readFileSync(path, { encoding: "utf8" });
 };
