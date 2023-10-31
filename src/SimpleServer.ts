@@ -20,7 +20,7 @@ export class SimpleServer {
   #server;
   constructor(
     port: number,
-    cb: (req: Request) => Promise<string>,
+    cb: (req: Request) => Promise<string | null>,
     handler: (request: Request) => Promise<Response> = SimpleServer.handler(cb)
   ) {
     this.#server = Bun.serve({
@@ -47,7 +47,7 @@ export namespace SimpleServer {
     manifest = "/manifest.json",
   }
   export const handler =
-    (cb: (req: Request) => Promise<string>) => async (req: Request) => {
+    (cb: (req: Request) => Promise<string | null>) => async (req: Request) => {
       const { CONTENT_TYPE } = SimpleServer.Header.HeaderKeys;
       const {
         TEXT_JAVASCRIPT,
@@ -68,7 +68,7 @@ export namespace SimpleServer {
         if (cb) {
           cbreturn = await cb(req);
         }
-        if (cbreturn !== undefined) return new Response(`${cbreturn}`);
+        if (cbreturn !== null) return new Response(`${cbreturn}`);
         if (path === SimpleServer.pathnames.css) {
           logger("handling:", path);
           return sendFileResponse(
