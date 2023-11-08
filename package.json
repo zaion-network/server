@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.3",
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "@zaionstate/zaionbase": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "5.2.2"
