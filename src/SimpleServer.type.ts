@@ -59,3 +59,11 @@ export namespace SimpleServer {
     manifest = "/manifest.json",
   }
 }
+
+export interface handler {
+  (request: Request): Promise<Response>;
+}
+
+export interface cb {
+  (req: Request): Promise<string | null>;
+}
