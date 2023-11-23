@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { logger } from "./utils/logger";
-import { Header as H } from "./SimpleServer.type";
+import { Header as H, cb, handler } from "./SimpleServer.type";
 import { handler as h } from "./utils/handler";
 
 /**
@@ -20,13 +20,11 @@ export class SimpleServer {
   #server;
   constructor(
     port: number,
-    cb: (req: Request) => Promise<string | null>,
-    handler: (request: Request) => Promise<Response> = SimpleServer.handler(cb)
+    cb: cb,
+    handler: handler = SimpleServer.handler(cb)
   ) {
-    this.#server = Bun.serve({
-      port,
-      fetch: handler,
-    });
+    const options = { port, fetch: handler };
+    this.#server = Bun.serve(options);
     logger(`Server is listening on port: `, this.#server.port);
   }
   get server() {
