@@ -28,5 +28,8 @@ export const handleAssets = (path: string) => {
     [!contentType, handleNoContentType, []],
     [isImagyFile, handleImage, [path]],
   ];
-  return conditioner.elseIf("", arr, [handleAssetsDefault, []]);
+  return conditioner.elseIf("", arr, [
+    handleAssetsDefault,
+    [contentType, path],
+  ]);
 };
