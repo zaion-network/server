@@ -2,6 +2,7 @@
 import { logger } from "./utils/logger";
 import { Header as H, cb, handler } from "./SimpleServer.type";
 import { handler as h } from "./utils/handler";
+import { getFileString as gfs } from ".";
 
 /**
  * SimpleServer handles HTML, JS and CSS files located respectively:
@@ -33,5 +34,6 @@ export class SimpleServer {
 }
 export namespace SimpleServer {
   export const handler = h;
+  export import getFileString = gfs;
   export import Header = H;
 }
