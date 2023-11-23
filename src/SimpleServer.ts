@@ -2,6 +2,75 @@
 
 import { logger } from "./utils/logger";
 import { sendFileResponse } from "./utils/sendFileResponse";
+import { Conditioner } from "@zaionstate/zaionbase";
+
+const conditioner = new Conditioner();
+const handleCss = (path: string) => {
+  {
+    logger("handling:", path);
+    return sendFileResponse(
+      SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+      SimpleServer.Header.ContentTypeValues.TEXT_CSS,
+      SimpleServer.paths.css
+    );
+  }
+};
+const handleJs = (path: string) => {
+  logger("handling:", path);
+  return sendFileResponse(
+    SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+    SimpleServer.Header.ContentTypeValues.TEXT_JAVASCRIPT,
+    SimpleServer.paths.js
+  );
+};
+const handleManifest = (path: string) => {
+  logger("handling:", path);
+  return sendFileResponse(
+    SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+    SimpleServer.Header.ContentTypeValues.APPLICATION_JSON,
+    SimpleServer.paths.manifest
+  );
+};
+const handleDefault = () => {
+  logger("fallback handling");
+  return sendFileResponse(
+    SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+    SimpleServer.Header.ContentTypeValues.TEXT_HTML,
+    SimpleServer.paths.index
+  );
+};
+const handleAssets = (path: string) => {
+  logger("handling:", path);
+  const extension = path.split(".").pop();
+  const map = new Map();
+  map.set("js", SimpleServer.Header.ContentTypeValues.TEXT_JAVASCRIPT);
+  map.set("css", SimpleServer.Header.ContentTypeValues.TEXT_CSS);
+  map.set("svg", SimpleServer.Header.ContentTypeValues.IMAGE_SVGXML);
+  map.set("png", SimpleServer.Header.ContentTypeValues.IMAGE_PNG);
+  map.set("ico", SimpleServer.Header.ContentTypeValues.IMAGE_XICON);
+  map.set("ttf", SimpleServer.Header.ContentTypeValues.FONT_TTF);
+  map.set("woff", SimpleServer.Header.ContentTypeValues.FONT_WOFF);
+  const contentType = map.get(extension);
+  if (!contentType) {
+    logger("undefined content type");
+    throw new Error("This type of file is not yet suppored by the server.");
+  }
+  if (
+    contentType === SimpleServer.Header.ContentTypeValues.IMAGE_PNG ||
+    contentType === SimpleServer.Header.ContentTypeValues.IMAGE_XICON ||
+    contentType === SimpleServer.Header.ContentTypeValues.IMAGE_GIF ||
+    contentType === SimpleServer.Header.ContentTypeValues.IMAGE_JPEG
+  ) {
+    logger("handling an image file type");
+    const file = Bun.file(`.${path}`);
+    return new Response(file);
+  }
+  return sendFileResponse(
+    SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
+    contentType,
+    `.${path}`
+  );
+};
 
 /**
  * SimpleServer handles HTML, JS and CSS files located respectively:
@@ -48,92 +117,20 @@ export namespace SimpleServer {
   }
   export const handler =
     (cb: (req: Request) => Promise<string | null>) => async (req: Request) => {
-      const { CONTENT_TYPE } = SimpleServer.Header.HeaderKeys;
-      const {
-        TEXT_JAVASCRIPT,
-        TEXT_CSS,
-        APPLICATION_JSON,
-        IMAGE_SVGXML,
-        IMAGE_XICON,
-        IMAGE_PNG,
-        IMAGE_GIF,
-        IMAGE_JPEG,
-        FONT_TTF,
-        FONT_WOFF,
-      } = SimpleServer.Header.ContentTypeValues;
       const url = new URL(req.url);
       const path = url.pathname;
       try {
-        let cbreturn = undefined;
-        if (cb) {
-          cbreturn = await cb(req);
-        }
-        if (cbreturn !== null) return new Response(`${cbreturn}`);
-        if (path === SimpleServer.pathnames.css) {
-          logger("handling:", path);
-          return sendFileResponse(
-            CONTENT_TYPE,
-            TEXT_CSS,
-            SimpleServer.paths.css
-          );
-        }
-        if (path === SimpleServer.pathnames.js) {
-          logger("handling:", path);
-          return sendFileResponse(
-            CONTENT_TYPE,
-            TEXT_JAVASCRIPT,
-            SimpleServer.paths.js
-          );
-        }
-        if (path === SimpleServer.pathnames.manifest) {
-          logger("handling:", path);
-          return sendFileResponse(
-            CONTENT_TYPE,
-            APPLICATION_JSON,
-            SimpleServer.paths.manifest
-          );
-        }
-        if (path.includes("/assets/")) {
-          logger("handling:", path);
-          const extension = path.split(".").pop();
-          const map = new Map();
-          map.set("js", TEXT_JAVASCRIPT);
-          map.set("css", TEXT_CSS);
-          map.set("svg", IMAGE_SVGXML);
-          map.set("png", IMAGE_PNG);
-          map.set("ico", IMAGE_XICON);
-          map.set("ttf", FONT_TTF);
-          map.set("woff", FONT_WOFF);
-          const contentType = map.get(extension);
-          if (!contentType) {
-            logger("undefined content type");
-            throw new Error(
-              "This type of file is not yet suppored by the server."
-            );
-          }
-          if (
-            contentType === IMAGE_PNG ||
-            contentType === IMAGE_XICON ||
-            contentType === IMAGE_GIF ||
-            contentType === IMAGE_JPEG
-          ) {
-            logger("handling an image file type");
-            const file = Bun.file(`.${path}`);
-            return new Response(file);
-          }
-          return sendFileResponse(
-            SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
-            contentType,
-            `.${path}`
-          );
-        } else {
-          logger("fallback handling");
-          return sendFileResponse(
-            SimpleServer.Header.HeaderKeys.CONTENT_TYPE,
-            SimpleServer.Header.ContentTypeValues.TEXT_HTML,
-            SimpleServer.paths.index
-          );
-        }
+        let cbreturn: any = undefined;
+        if (cb) cbreturn = await cb(req);
+        type c = Conditioner.condition;
+        const paths: Conditioner.condition[] = [
+          [cbreturn !== null, () => new Response(`${cbreturn}`), []],
+          [path === SimpleServer.pathnames.css, handleCss, [path]],
+          [path === SimpleServer.pathnames.js, handleJs, [path]],
+          [path === SimpleServer.pathnames.manifest, handleManifest, [path]],
+          [path.includes("/assets/"), handleAssets, [path]],
+        ];
+        return conditioner.elseIf("", paths, [() => handleDefault(), []]);
       } catch (error: any) {
         logger("got an error handling messages", error);
         throw new Error(error.message);
