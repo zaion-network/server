@@ -6,7 +6,12 @@
 import { readFileSync } from "fs";
 import { logger } from "./logger";
 
-export const getFileString = (path: string) => {
+export const getFileString: getFileString.getFileString = path => {
   logger(`scope: ${getFileString.name}, getting: ${path}`);
   return readFileSync(path, { encoding: "utf8" });
 };
+export namespace getFileString {
+  export interface getFileString {
+    (path: string): string;
+  }
+}
