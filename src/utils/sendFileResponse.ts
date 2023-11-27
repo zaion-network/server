@@ -34,6 +34,8 @@ export const sendFileResponse = async (
       SimpleServer.Header.ContentTypeValues;
     if (type === TEXT_HTML) {
       logger("sending an html");
+      console.log("html");
+
       return new Response(defaultHtml, { headers });
     } else if (type === TEXT_JAVASCRIPT) {
       logger("sending an js");
